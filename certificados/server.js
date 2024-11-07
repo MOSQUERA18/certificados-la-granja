@@ -6,6 +6,9 @@ const tesseract = require('tesseract.js');  // OCR para detectar el CAPTCHA
 const fs = require('fs');
 const path = require('path');
 const cors = require('cors');
+const dotenv = require('dotenv')
+
+dotenv.config()
 
 // Inicializar Express
 const app = express();
@@ -34,9 +37,14 @@ app.post('/upload', upload.single('file'), async (req, res) => {
       const { cedula, fechaExpedicionDia, fechaExpedicionMes, fechaExpedicionAno, tipoDocumento } = row;
 
       if (tipoDocumento === 'Cedula') {
+        console.log(tipoDocumento , "<--- ");
+        
         console.log("entrando al modo de generar cedulas");
         await generarCertificadoCedula(cedula, { dia: fechaExpedicionDia, mes: fechaExpedicionMes, ano: fechaExpedicionAno });
-      } else if (tipoDocumento === 'Tarjeta de Identidad') {
+      } else if (tipoDocumento === 'Tarjeta') {
+        console.log(tipoDocumento , "<--- ");
+        
+        console.log("entrando al modo de generar Tarjetas");
         await generarCertificadoTarjeta(cedula, { dia: fechaExpedicionDia, mes: fechaExpedicionMes, ano: fechaExpedicionAno });
       }
     }
@@ -69,7 +77,7 @@ async function generarCertificadoCedula(cedula, fechaExpedicion) {
 
     // Usar Tesseract para leer el CAPTCHA
     const result = await tesseract.recognize(captchaPath, 'eng');
-    const captchaText = result.data && result.data.text ? result.data.text.trim() : null; // Manejo seguro de la respuesta
+    const captchaText = result.data && typeof result.data.text === 'string' ? result.data.text.trim() : null; // Manejo seguro de la respuesta
 
     if (!captchaText) {
       throw new Error('No se pudo detectar texto en el CAPTCHA');
@@ -79,6 +87,7 @@ async function generarCertificadoCedula(cedula, fechaExpedicion) {
 
     // Llenar el campo del CAPTCHA con el texto detectado
     await page.type('#ContentPlaceHolder1_TextBox2', captchaText);
+
 
     // Continuar con el flujo
     await page.click('#ContentPlaceHolder1_Button1');
@@ -104,6 +113,7 @@ async function generarCertificadoCedula(cedula, fechaExpedicion) {
     await browser.close();
     console.log(`Certificado para cédula ${cedula} guardado en ${pdfPath}`);
   } catch (error) {
+    console.log(error)
     console.error(`Error al generar certificado para la cédula ${cedula}:`, error.message);
   }
 }

@@ -1,7 +1,10 @@
-// App.jsx (Frontend - React)
-
+// App.jsx
 import { useState } from 'react';
 import axios from 'axios';
+import Plantilla from './Plantilla';
+import './App.css'; // Importar el archivo de estilos
+
+ const RUTA_UPLOADS = process.env.REACT_APP_RUTA_UPLOADS || 'http://localhost:3000/upload'
 
 function App() {
   const [file, setFile] = useState(null);
@@ -18,22 +21,30 @@ function App() {
     formData.append('file', file);
 
     try {
-      const response = await axios.post('http://localhost:3000/upload', formData);
+      const response = await axios.post(RUTA_UPLOADS, formData);
       setMessage(response.data);
-    // eslint-disable-next-line no-unused-vars
     } catch (error) {
+      console.log(error);
+      
       setMessage('Error al generar los certificados');
     }
   };
 
   return (
-    <div>
-      <h1>Generador de Certificados</h1>
-      <form onSubmit={handleSubmit}>
-        <input type="file" onChange={handleFileChange} />
-        <button type="submit">Subir archivo</button>
+    <div className="container">
+      <header className="header">
+        <img src="sena.png" alt="Sena Logo" className="logo" />
+        <h1>Generador de Certificados Sena</h1>
+      </header>
+
+      <Plantilla />
+
+      <form onSubmit={handleSubmit} className="upload-form">
+        <input type="file" onChange={handleFileChange} className="file-input" />
+        <button type="submit" className="submit-button">Generar Certificados</button>
       </form>
-      <p>{message}</p>
+
+      {message && <p className="message">{message}</p>}
     </div>
   );
 }
