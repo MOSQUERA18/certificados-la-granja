@@ -13,6 +13,7 @@ dotenv.config()
 // Inicializar Express
 const app = express();
 const upload = multer({ dest: 'uploads/' });
+
 app.use(cors());
 
 // Crear la carpeta 'certificados' si no existe
@@ -64,7 +65,7 @@ async function generarCertificadoCedula(cedula, fechaExpedicion) {
     await page.goto('https://certvigenciacedula.registraduria.gov.co/Datos.aspx');
 
     // Llenar los campos del formulario
-    await page.type('#ContentPlaceHolder1_TextBox1', cedula);
+    await page.type('#ContentPlaceHolder1_TextBoxWatermarkExtender2_ClientState', cedula);
     await page.select('#ContentPlaceHolder1_DropDownList1', fechaExpedicion.dia);
     await page.select('#ContentPlaceHolder1_DropDownList2', fechaExpedicion.mes);
     await page.select('#ContentPlaceHolder1_DropDownList3', fechaExpedicion.ano);

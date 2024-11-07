@@ -47,6 +47,12 @@ h1 {
   border: 1px solid #ccc;
   width: 100%;
 }
+.file-name {
+  color: black; /* Cambia el color del texto a negro */
+  font-size: 16px; /* Ajusta el tamaño de la fuente si lo deseas */
+  font-weight: normal; /* Puedes cambiar el peso de la fuente, si es necesario */
+}
+
 
 .submit-button {
   padding: 10px 20px;
