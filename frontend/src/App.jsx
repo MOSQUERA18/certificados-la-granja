@@ -4,7 +4,7 @@ import axios from 'axios';
 import Plantilla from './Plantilla';
 import './App.css'; // Importar el archivo de estilos
 
- const RUTA_UPLOADS = process.env.REACT_APP_RUTA_UPLOADS || 'http://localhost:3000/upload'
+//  const RUTA_UPLOADS = process.env.REACT_APP_RUTA_UPLOADS || 'http://localhost:3000/upload'
 
 function App() {
   const [file, setFile] = useState(null);
@@ -21,7 +21,7 @@ function App() {
     formData.append('file', file);
 
     try {
-      const response = await axios.post(RUTA_UPLOADS, formData);
+      const response = await axios.post('http://localhost:3000/upload', formData);
       setMessage(response.data);
     } catch (error) {
       console.log(error);
