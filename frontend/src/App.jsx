@@ -2,6 +2,7 @@ import { useState } from 'react';
 import axios from 'axios';
 import Plantilla from './Plantilla';
 import './App.css'; // Importar el archivo de estilos
+// import ProductCard from './card';
 
 function App() {
   const [file, setFile] = useState(null);
@@ -42,6 +43,8 @@ function App() {
   };
 
   return (
+
+    
     <div className="container">
       <header className="header">
         <img src="sena.png" alt="Sena Logo" className="logo" />
@@ -67,7 +70,20 @@ function App() {
       )}
 
       {message && <p className="message">{message}</p>}
+
+
+      {/* <div className="app">
+            <ProductCard
+                name="Café Sello Rojo"
+                price="2000"
+                imgSrc="/cafe.jpg" // Aquí pones la imagen del producto
+            />
+        </div> */}
+
+
     </div>
+
+
   );
 }
 
