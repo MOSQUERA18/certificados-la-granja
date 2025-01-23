@@ -8,19 +8,28 @@ from selenium.common.exceptions import UnexpectedAlertPresentException, TimeoutE
 import time
 import traceback
 import pandas as pd
+from dotenv import load_dotenv
+import os
 from leerEXCEL import leer_excel
 from generarResultados import generar_resultados
+
+# Cargar las variables de entorno
+load_dotenv()
 
 def automatizar_navegacion(datos):
     driver = None
     resultados = []
 
     try:
-        ruta_chromedriver = "C:\\Users\\registrolagranja\\Documents\\certificados-la-granja\\PROYECTO_ADC\\ChromeDriver\\chromedriver-win64\\chromedriver.exe"
+        # Obtener ruta del chromedriver y URL desde .env
+        ruta_chromedriver = os.getenv("CHROMEDRIVER_PATH")
+        url = os.getenv("CERTIFICADO_URL")
+
+        if not ruta_chromedriver or not url:
+            raise ValueError("Faltan variables de entorno en el archivo .env")
+
         service = Service(ruta_chromedriver)
         driver = webdriver.Chrome(service=service)
-
-        url = "https://certvigenciacedula.registraduria.gov.co/"
         driver.get(url)
 
         fila_actual = 0
@@ -106,8 +115,10 @@ def automatizar_navegacion(datos):
             time.sleep(1)
             driver.quit()
 
+        # Obtener nombre del archivo desde .env
+        nombre_archivo = os.getenv("OUTPUT_FILE", "resultados_certificados.xlsx")
         resultados_df = pd.DataFrame(resultados)
-        generar_resultados(datos, resultados_df, "resultados_certificados.xlsx")
+        generar_resultados(datos, resultados_df, nombre_archivo)
 
 if __name__ == "__main__":
     archivo_usuario = input("Ingrese el nombre del archivo Excel con los datos: ")
