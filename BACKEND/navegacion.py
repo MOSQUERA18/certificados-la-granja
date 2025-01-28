@@ -11,6 +11,7 @@ import traceback
 import pandas as pd
 from dotenv import load_dotenv
 import os
+import glob
 from leerEXCEL import leer_excel
 from generarResultados import generar_resultados
 
@@ -41,7 +42,7 @@ def automatizar_navegacion(datos):
 
                 # Verificar si el mensaje de error está presente
                 try:
-                    WebDriverWait(driver, 1).until(  # Reducido a 3 segundos
+                    WebDriverWait(driver, 1).until(
                         EC.presence_of_element_located((By.XPATH, "//h3[text()='Al parecer se presentó algun problema!']"))
                     )
                     print(f"Se presentó un problema en la fila {fila_actual + 1}. Continuando con la siguiente fila...")
@@ -53,35 +54,37 @@ def automatizar_navegacion(datos):
                 row = datos.iloc[fila_actual]
                 print(f"Procesando fila {fila_actual + 1}...")
 
-                WebDriverWait(driver, 1).until(  # Reducido a 5 segundos
+                WebDriverWait(driver, 1).until(
                     EC.element_to_be_clickable((By.XPATH, "//a[text()='Expedición Certificado']"))
                 ).click()
 
-                WebDriverWait(driver, 1).until(  # Reducido a 5 segundos
+                WebDriverWait(driver, 1).until(
                     EC.presence_of_element_located((By.ID, "ContentPlaceHolder1_TextBox1"))
                 ).send_keys(str(row["NUMERO DE DOCUMENTO"]))
 
-                Select(WebDriverWait(driver, 1).until(  # Reducido a 5 segundos
+                Select(WebDriverWait(driver, 1).until(
                     EC.presence_of_element_located((By.ID, "ContentPlaceHolder1_DropDownList1"))
                 )).select_by_visible_text(str(row["DIA"]).zfill(2))
 
                 mes_normalizado = str(row["MES"]).capitalize()
-                Select(WebDriverWait(driver, 1).until(  # Reducido a 5 segundos
+                Select(WebDriverWait(driver, 1).until(
                     EC.presence_of_element_located((By.ID, "ContentPlaceHolder1_DropDownList2"))
                 )).select_by_visible_text(mes_normalizado)
 
-                Select(WebDriverWait(driver, 1).until(  # Reducido a 5 segundos
+                Select(WebDriverWait(driver, 1).until(
                     EC.presence_of_element_located((By.ID, "ContentPlaceHolder1_DropDownList3"))
                 )).select_by_visible_text(str(row["AÑO"]))
 
-                WebDriverWait(driver, 1).until(  # Reducido a 5 segundos
+                WebDriverWait(driver, 1).until(
                     EC.presence_of_element_located((By.ID, "ContentPlaceHolder1_TextBox2"))
                 ).send_keys("LANAP")
 
-                WebDriverWait(driver, 1).until(  # Reducido a 5 segundos
+                WebDriverWait(driver, 1).until(
                     EC.element_to_be_clickable((By.ID, "ContentPlaceHolder1_Button1"))
                 ).click()
 
+                # Esperar un momento para que el PDF se genere
+                time.sleep(1)  # Ajusta el tiempo según sea necesario
                 try:
                     mensaje_error = WebDriverWait(driver, 1).until(  # Reducido a 3 segundos
                         EC.presence_of_element_located((By.ID, "ContentPlaceHolder1_Label11"))
@@ -103,16 +106,36 @@ def automatizar_navegacion(datos):
 
                 except TimeoutException:
                     pass
-
+                
                 WebDriverWait(driver, 1).until(  # Reducido a 5 segundos
                     EC.element_to_be_clickable((By.ID, "ContentPlaceHolder1_Button1"))
                 ).click()
 
-                print(f"Certificado generado correctamente para la fila {fila_actual + 1}.")
-                resultados.append({
-                    "STATUS": "EXITO",
-                    "OBSERVACIONES": "Certificado generado correctamente"
-                })
+                # Verificar si el archivo PDF se ha descargado
+                downloads_folder = os.path.join(os.path.expanduser("~"), "Downloads")
+                pdf_filename_pattern = f"Certificado estado cedula {str(row['NUMERO DE DOCUMENTO'])}*.pdf"
+
+                # Esperar hasta que el archivo PDF se descargue
+                pdf_path = None
+                for _ in range(10):  # Intentar hasta 10 veces
+                    pdf_path = glob.glob(os.path.join(downloads_folder, pdf_filename_pattern))
+                    if pdf_path:
+                        break
+                    time.sleep(1)  # Esperar 1 segundo entre intentos
+
+                if pdf_path:
+                    print(f"Certificado generado correctamente para la fila {fila_actual + 1}.")
+                    resultados.append({
+                        "STATUS": "EXITO",
+                        "OBSERVACIONES": "Certificado generado correctamente"
+                    })
+                else:
+                    print(f"Certificado no encontrado para la fila {fila_actual + 1}.")
+                    resultados.append({
+                        "STATUS": "FALLIDO",
+                        "OBSERVACIONES": "Certificado no se generó por Error de la pagina"
+                    })
+
                 fila_actual += 1
 
             except WebDriverException as e:
