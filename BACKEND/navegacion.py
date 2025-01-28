@@ -5,6 +5,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.ui import Select
 from selenium.common.exceptions import UnexpectedAlertPresentException, TimeoutException, WebDriverException
+from webdriver_manager.chrome import ChromeDriverManager
 import time
 import traceback
 import pandas as pd
@@ -21,14 +22,14 @@ def automatizar_navegacion(datos):
     resultados = []
 
     try:
-        # Obtener ruta del chromedriver y URL desde .env
-        ruta_chromedriver = os.getenv("CHROMEDRIVER_PATH")
+        # Obtener URL desde .env
         url = os.getenv("CERTIFICADO_URL")
 
-        if not ruta_chromedriver or not url:
+        if not url:
             raise ValueError("Faltan variables de entorno en el archivo .env")
 
-        service = Service(ruta_chromedriver)
+        # Configurar el driver usando webdriver-manager
+        service = Service(ChromeDriverManager().install())
         driver = webdriver.Chrome(service=service)
         driver.get(url)
 
@@ -38,40 +39,51 @@ def automatizar_navegacion(datos):
             try:
                 driver.get(url)
 
+                # Verificar si el mensaje de error está presente
+                try:
+                    WebDriverWait(driver, 1).until(  # Reducido a 3 segundos
+                        EC.presence_of_element_located((By.XPATH, "//h3[text()='Al parecer se presentó algun problema!']"))
+                    )
+                    print(f"Se presentó un problema en la fila {fila_actual + 1}. Continuando con la siguiente fila...")
+                    fila_actual += 1
+                    continue  # Saltar a la siguiente fila
+                except TimeoutException:
+                    pass  # No se encontró el mensaje, continuar con el proceso normal
+
                 row = datos.iloc[fila_actual]
                 print(f"Procesando fila {fila_actual + 1}...")
 
-                WebDriverWait(driver, 10).until(
+                WebDriverWait(driver, 1).until(  # Reducido a 5 segundos
                     EC.element_to_be_clickable((By.XPATH, "//a[text()='Expedición Certificado']"))
                 ).click()
 
-                WebDriverWait(driver, 10).until(
+                WebDriverWait(driver, 1).until(  # Reducido a 5 segundos
                     EC.presence_of_element_located((By.ID, "ContentPlaceHolder1_TextBox1"))
                 ).send_keys(str(row["NUMERO DE DOCUMENTO"]))
 
-                Select(WebDriverWait(driver, 10).until(
+                Select(WebDriverWait(driver, 1).until(  # Reducido a 5 segundos
                     EC.presence_of_element_located((By.ID, "ContentPlaceHolder1_DropDownList1"))
                 )).select_by_visible_text(str(row["DIA"]).zfill(2))
 
                 mes_normalizado = str(row["MES"]).capitalize()
-                Select(WebDriverWait(driver, 10).until(
+                Select(WebDriverWait(driver, 1).until(  # Reducido a 5 segundos
                     EC.presence_of_element_located((By.ID, "ContentPlaceHolder1_DropDownList2"))
                 )).select_by_visible_text(mes_normalizado)
 
-                Select(WebDriverWait(driver, 10).until(
+                Select(WebDriverWait(driver, 1).until(  # Reducido a 5 segundos
                     EC.presence_of_element_located((By.ID, "ContentPlaceHolder1_DropDownList3"))
                 )).select_by_visible_text(str(row["AÑO"]))
 
-                WebDriverWait(driver, 10).until(
+                WebDriverWait(driver, 1).until(  # Reducido a 5 segundos
                     EC.presence_of_element_located((By.ID, "ContentPlaceHolder1_TextBox2"))
                 ).send_keys("LANAP")
 
-                WebDriverWait(driver, 10).until(
+                WebDriverWait(driver, 1).until(  # Reducido a 5 segundos
                     EC.element_to_be_clickable((By.ID, "ContentPlaceHolder1_Button1"))
                 ).click()
 
                 try:
-                    mensaje_error = WebDriverWait(driver, 5).until(
+                    mensaje_error = WebDriverWait(driver, 1).until(  # Reducido a 3 segundos
                         EC.presence_of_element_located((By.ID, "ContentPlaceHolder1_Label11"))
                     ).text
 
@@ -86,12 +98,13 @@ def automatizar_navegacion(datos):
 
                     if "CAPTCHA" in mensaje_error:
                         print(f"Error de CAPTCHA en la fila {fila_actual + 1}. Reintentando...")
+                        # Aquí puedes implementar un contador de reintentos si lo deseas
                         continue
 
                 except TimeoutException:
                     pass
 
-                WebDriverWait(driver, 10).until(
+                WebDriverWait(driver, 1).until(  # Reducido a 5 segundos
                     EC.element_to_be_clickable((By.ID, "ContentPlaceHolder1_Button1"))
                 ).click()
 
