@@ -31,7 +31,7 @@ def automatizar_navegacion(datos):
 
         # Configurar el driver usando webdriver-manager
         service = Service(ChromeDriverManager().install())
-        driver = webdriver.Chrome(service=service)
+        driver = webdriver.Chrome(service=service)          
         driver.get(url)
 
         fila_actual = 0
@@ -61,7 +61,7 @@ def automatizar_navegacion(datos):
                 WebDriverWait(driver, 1).until(
                     EC.presence_of_element_located((By.ID, "ContentPlaceHolder1_TextBox1"))
                 ).send_keys(str(row["NUMERO DE DOCUMENTO"]))
-
+                                                                                                                                                                                                                                                                                                                                      
                 Select(WebDriverWait(driver, 1).until(
                     EC.presence_of_element_located((By.ID, "ContentPlaceHolder1_DropDownList1"))
                 )).select_by_visible_text(str(row["DIA"]).zfill(2))
@@ -111,6 +111,28 @@ def automatizar_navegacion(datos):
                     EC.element_to_be_clickable((By.ID, "ContentPlaceHolder1_Button1"))
                 ).click()
 
+                # Verificar si hay una novedad
+                try:
+                    novedad_element = WebDriverWait(driver, 1).until(
+                        EC.presence_of_element_located((By.ID, "ContentPlaceHolder1_Label12"))
+                    )
+                    if novedad_element.is_displayed():
+                        print(f"Novedad detectada en la fila {fila_actual + 1}.")
+                        resultados.append({
+                            "STATUS": "NOVEDAD",
+                            "OBSERVACIONES": "Esta persona tiene una novedad en su certificado"
+                        })
+                    else:
+                        resultados.append({
+                            "STATUS": "EXITO",
+                            "OBSERVACIONES": "Certificado generado correctamente"
+                        })
+                except TimeoutException:
+                    resultados.append({
+                        "STATUS": "EXITO",
+                        "OBSERVACIONES": "Certificado generado correctamente"
+                    })
+
                 # Verificar si el archivo PDF se ha descargado
                 downloads_folder = os.path.join(os.path.expanduser("~"), "Downloads")
                 pdf_filename_pattern = f"Certificado estado cedula {str(row['NUMERO DE DOCUMENTO'])}*.pdf"
@@ -125,10 +147,6 @@ def automatizar_navegacion(datos):
 
                 if pdf_path:
                     print(f"Certificado generado correctamente para la fila {fila_actual + 1}.")
-                    resultados.append({
-                        "STATUS": "EXITO",
-                        "OBSERVACIONES": "Certificado generado correctamente"
-                    })
                 else:
                     print(f"Certificado no encontrado para la fila {fila_actual + 1}.")
                     resultados.append({

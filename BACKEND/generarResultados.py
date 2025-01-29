@@ -45,6 +45,8 @@ def generar_resultados(datos, resultados, nombre_archivo_salida="resultados.xlsx
 
             if row["STATUS"] == "EXITO":
                 fill_color = PatternFill(start_color="00FF00", end_color="00FF00", fill_type="solid")  # Verde
+            elif row["STATUS"] == "NOVEDAD":
+                fill_color = PatternFill(start_color="FFFF00", end_color="FFFF00", fill_type="solid")  # Amarillo
             elif row["STATUS"] == "FALLIDO":
                 fill_color = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")  # Rojo
 
