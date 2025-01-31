@@ -1,3 +1,4 @@
+import os
 import pandas as pd
 from openpyxl import load_workbook
 from openpyxl.styles import PatternFill
@@ -15,24 +16,33 @@ def generar_resultados(datos, resultados, nombre_archivo_salida="resultados.xlsx
     print("Agregando columna de observaciones...")
     datos["OBSERVACIONES"] = resultados["OBSERVACIONES"]
 
+    # Obtener la ruta de la carpeta de descargas
+    downloads_folder = os.path.join(os.path.expanduser("~"), "Downloads")
+    if not os.path.exists(downloads_folder):
+        print("Error: No se puede encontrar la carpeta de descargas.")
+        return
+    
+    # Construir la ruta completa para guardar el archivo
+    ruta_archivo_salida = os.path.join(downloads_folder, nombre_archivo_salida)
+
     # Guardar el archivo Excel con las observaciones
     try:
-        datos.to_excel(nombre_archivo_salida, index=False, engine="openpyxl")
-        print(f"Archivo guardado como: {nombre_archivo_salida}")
+        datos.to_excel(ruta_archivo_salida, index=False, engine="openpyxl")
+        print(f"Archivo guardado como: {ruta_archivo_salida}")
     except Exception as e:
         print(f"Error al guardar el archivo Excel: {e}")
         return
 
     # Ajustar el ancho de las columnas según el formato de la plantilla
     try:
-        ajustar_ancho(nombre_archivo_salida)
+        ajustar_ancho(ruta_archivo_salida)
     except Exception as e:
         print(f"Error al ajustar el ancho de las columnas: {e}")
         return
 
     # Cargar el archivo Excel para aplicar colores
     try:
-        wb = load_workbook(nombre_archivo_salida)
+        wb = load_workbook(ruta_archivo_salida)
         ws = wb.active
 
         # Aplicar colores a las filas según el estado
@@ -56,8 +66,7 @@ def generar_resultados(datos, resultados, nombre_archivo_salida="resultados.xlsx
                     ws.cell(row=excel_row, column=col).fill = fill_color
 
         # Guardar los cambios
-        wb.save(nombre_archivo_salida)
-        print(f"Archivo de resultados generado y coloreado: {nombre_archivo_salida}")
+        wb.save(ruta_archivo_salida)
+        print(f"Archivo de resultados generado y coloreado: {ruta_archivo_salida}")
     except Exception as e:
         print(f"Error al aplicar colores: {e}")
-

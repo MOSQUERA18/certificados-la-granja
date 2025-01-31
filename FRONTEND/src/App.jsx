@@ -6,11 +6,15 @@ function App() {
   const [file, setFile] = useState(null);
   const [mensaje, setMensaje] = useState("");
   const [progress, setProgress] = useState(0);
+  const [isProcessing, setIsProcessing] = useState(false); // Estado para saber si está procesando
+  const [hasDownloaded, setHasDownloaded] = useState(false); // Nuevo estado para controlar la descarga
   const fileInputRef = useRef(null); // Referencia al input de archivo
+  const [downloadClickCount, setDownloadClickCount] = useState(0); // Contador de clics en el botón de descarga
 
   // Manejo de selección de archivo
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
+
 
     if (!selectedFile) {
       alert("No seleccionaste ningún archivo.");
@@ -41,6 +45,10 @@ function App() {
       alert("Selecciona un archivo primero.");
       return;
     }
+
+    setIsProcessing(true);  // Iniciar proceso
+    setProgress(0);  // Restablecer progreso
+    setMensaje("");  // Limpiar mensaje previo
 
     const formData = new FormData();
     formData.append("file", file);
@@ -73,6 +81,16 @@ function App() {
         if (autoResponse.status === 200) {
           setMensaje(autoResponse.data.mensaje || "Automatización completada.");
           alert("Automatización completada con éxito.");
+
+          // Mensaje con la ubicación del archivo generado
+          setMensaje(
+            `Automatización completada. Los resultados fueron guardados en: Descargas`
+          );
+          
+          // Limpiar mensaje después de 5 segundos
+          setTimeout(() => {
+            setMensaje("");
+          }, 5000);
         } else {
           setMensaje("Error en la automatización.");
           alert("Hubo un problema al iniciar la automatización.");
@@ -87,17 +105,41 @@ function App() {
       alert("Error al conectar con el servidor para subir el archivo.");
       setMensaje("Error al conectar con el servidor.");
       setProgress(0);
+    } finally {
+      // Limpiar después de completar el proceso
+      setIsProcessing(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+      setFile(null);  // Limpiar el archivo seleccionado
     }
   };
 
+  const handleDownload = () => {
+    setDownloadClickCount((prevCount) => prevCount + 1); // Incrementar contador de clics
+
+    if (downloadClickCount >= 1) {
+      alert("Solo puedes descargarlo una vez");
+    }
+  };
   return (
     <div className="container">
       <h1>Subir Archivo Excel</h1>
       <img src="/sena.png" alt="Logo" />
-      <input type="file" ref={fileInputRef} onChange={handleFileChange} />
-      <button onClick={handleUpload}>Cargar y Ejecutar</button>
+      <input 
+        type="file" 
+        ref={fileInputRef} 
+        onChange={handleFileChange} 
+        disabled={isProcessing} // Deshabilitar durante el proceso
+      />
+      <button onClick={handleUpload} disabled={isProcessing}>Cargar y Ejecutar</button>
       {progress > 0 && <progress value={progress} max="100"></progress>}
       <p>{mensaje}</p>
+
+      {/* Botón para descargar la plantilla de Excel */}
+      <a href="/plantilla.xlsx" download onClick={handleDownload}>
+        <button disabled={hasDownloaded}>Descargar Plantilla Excel</button>
+      </a>
     </div>
   );
 }
