@@ -1,154 +1,40 @@
 body {
-  background-color: #f4f4f4;
   font-family: Arial, sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 100vh; /* Ajuste para pantallas pequeñas */
-  margin: 0;
-  padding: 20px; /* Espaciado para evitar cortes en móviles */
-  flex-wrap: wrap; /* Permite adaptación en pantallas más pequeñas */
-}
-
-.container {
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  background-color: #e0f7e9;
   text-align: center;
-  width: 100%;
-  max-width: 400px; /* Evita que sea demasiado ancho en pantallas grandes */
-}
-
-/* Imagen responsiva */
-img {
-  width: 100px;
-  max-width: 100%;
-}
-
-/* Texto */
-h1 {
-  color: #333;
-  font-size: 22px;
-}
-
-/* Input responsivo */
-input {
-  margin: 10px 0;
-  padding: 10px;
-  width: 100%;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 16px;
-}
-
-/* Botón responsivo */
-button {
-  background-color: #007bff;
-  color: white;
-  padding: 12px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  width: 100%;
-  font-size: 16px;
-  transition: background-color 0.3s ease-in-out;
-}
-
-button:hover {
-  background-color: #0056b3;
-}
-
-/* Texto de mensaje */
-p {
-  margin-top: 10px;
-  color: #555;
-}
-
-/* 📌 Media Queries para hacer el diseño aún más responsivo */
-
-/* Dispositivos pequeños (menos de 600px, como celulares) */
-@media screen and (max-width: 600px) {
-  .container {
-      padding: 15px;
-      width: 90%;
-  }
-
-  h1 {
-      font-size: 20px;
-  }
-
-  button {
-      font-size: 14px;
-      padding: 10px;
-  }
-}
-
-/* Tablets (pantallas entre 600px y 1024px) */
-@media screen and (min-width: 601px) and (max-width: 1024px) {
-  .container {
-      max-width: 500px;
-  }
-
-  h1 {
-      font-size: 24px;
-  }
-}
-
-/* Pantallas grandes (más de 1024px) */
-@media screen and (min-width: 1025px) {
-  .container {
-      max-width: 450px;
-  }
-}
-
-button {
-  background: linear-gradient(45deg, #007bff, #00bfff);
-  color: white;
-  padding: 12px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  width: 100%;
-  font-size: 16px;
-  font-weight: bold;
-  transition: all 0.3s ease-in-out;
-  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
-}
-
-button:hover {
-  background: linear-gradient(45deg, #0056b3, #008cff);
-  transform: scale(1.05);
-  box-shadow: 0 6px 12px rgba(0, 123, 255, 0.5);
-}
-
-progress {
-  width: 100%;
-  height: 10px;
-  border-radius: 5px;
-  background-color: #ddd;
-  transition: width 0.3s;
 }
 
 .container {
-  animation: fadeIn 0.8s ease-in-out;
+  max-width: 500px;
+  margin: auto;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 128, 0, 0.3);
 }
 
-@keyframes fadeIn {
-  from {
-      opacity: 0;
-      transform: translateY(-20px);
-  }
-  to {
-      opacity: 1;
-      transform: translateY(0);
-  }
-}
-
-input[type="file"] {
+.upload-button {
+  background-color: #28a745;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
   cursor: pointer;
 }
 
-button {
-  cursor: pointer;
+.upload-button:hover {
+  background-color: #218838;
+}
+
+.progress-bar-container {
+  margin-top: 10px;
+}
+
+.file-uploader {
+  margin: 15px 0;
+}
+
+.message {
+  font-weight: bold;
+  color: #155724;
 }
