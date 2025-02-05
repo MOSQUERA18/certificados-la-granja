@@ -1,9 +1,11 @@
-from flask import Flask, request, jsonify
+import base64
+from flask import Flask, request, jsonify, send_file
 from flask_cors import CORS
 import pandas as pd
 import os
 from leerEXCEL import leer_excel
 from navegacion import automatizar_navegacion
+from Plantilla import generar_plantilla
 
 app = Flask(__name__)
 CORS(app)  # Habilitar CORS para permitir peticiones desde React
@@ -36,5 +38,19 @@ def iniciar_automatizacion():
     automatizar_navegacion(datos)
     return jsonify({"mensaje": "Automatización iniciada"}), 200
 
+@app.route('/descargar-plantilla', methods=['GET'])
+def descargar_plantilla():
+    try:
+        generar_plantilla()  # Generar la plantilla antes de enviarla
+
+        # Leer el archivo y convertirlo a base64
+        with open("plantilla.xlsx", "rb") as file:
+            base64_data = base64.b64encode(file.read()).decode('utf-8')
+
+        return jsonify({"archivo_base64": base64_data, "nombre": "plantilla.xlsx"})
+    
+    except Exception as e:
+        return jsonify({"error": f"Error al descargar: {str(e)}"}), 500
+        
 if __name__ == '__main__':
     app.run(debug=True, port=5000)  # Cambia el puerto a 5000 para evitar conflictos con React
