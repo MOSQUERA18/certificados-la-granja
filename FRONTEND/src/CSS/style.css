@@ -1,40 +1,125 @@
+/* Estilos generales */
 body {
-  font-family: Arial, sans-serif;
-  background-color: #e0f7e9;
-  text-align: center;
+  font-family: 'Poppins', sans-serif;
+  background-color: #f4f7f6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
 }
 
 .container {
   max-width: 500px;
-  margin: auto;
-  padding: 20px;
   background-color: #ffffff;
-  border-radius: 10px;
-  box-shadow: 0 0 10px rgba(0, 128, 0, 0.3);
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
 }
 
+.logo {
+  width: 120px;
+  margin-bottom: 15px;
+}
+
+.download-button,
 .upload-button {
-  background-color: #28a745;
+  background: linear-gradient(135deg, #28a745, #218838);
   color: white;
-  padding: 10px 20px;
+  padding: 12px 20px;
   border: none;
-  border-radius: 5px;
+  border-radius: 6px;
+  font-size: 16px;
   cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  margin: 10px 0;
 }
 
+.download-button:hover,
 .upload-button:hover {
-  background-color: #218838;
+  background: linear-gradient(135deg, #218838, #1e7e34);
+}
+
+
+
+.file-uploader {
+  background-color: #e9ecef;
+  padding: 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  border: 2px dashed #28a745;
+  text-align: center;
+  margin: 10px 0;
+}
+
+.file-uploader:hover {
+  background-color: #d4edda;
 }
 
 .progress-bar-container {
-  margin-top: 10px;
+  width: 100%;
+  background-color: #e9ecef;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-top: 15px;
+  position: relative;
 }
 
-.file-uploader {
-  margin: 15px 0;
+.progress-bar {
+  width: 0;
+  height: 8px;
+  background: linear-gradient(135deg, #28a745, #218838);
+  transition: width 0.4s ease;
 }
 
 .message {
   font-weight: bold;
   color: #155724;
+  margin-top: 10px;
+}
+
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-left-color: #28a745;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 15px auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.download-container {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #28a745, #218838);
+  color: white;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.icon-wrapper:hover {
+  background: linear-gradient(135deg, #218838, #1e7e34);
+}
+
+.icon {
+  font-size: 24px;
 }
