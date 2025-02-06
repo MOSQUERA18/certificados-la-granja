@@ -5,11 +5,13 @@ import ProgressBar from "./componentes/ProgressBar";
 import useFileUpload from "./componentes/useFileUpload";
 import DownloadTemplate from "./componentes/DownloadTemplate";
 import { FaFileExcel, FaHome } from "react-icons/fa"; // Iconos de Excel y Home
+import axios from "axios"; // Asegúrate de importar axios
 
 function App() {
   const { fileInputRef, handleFileChange, handleUpload, progress, isLoading, mensaje, automatizacionCompleta } =
     useFileUpload();
   const [mostrarSoloImagen, setMostrarSoloImagen] = useState(false);
+  const [resultadosDescargados, setResultadosDescargados] = useState(false); // Nuevo estado
 
   useEffect(() => {
     if (automatizacionCompleta) {
@@ -18,14 +20,40 @@ function App() {
   }, [automatizacionCompleta]);
 
   const handleRegresar = () => {
-    // Aquí puedes redirigir al inicio o realizar la acción que necesites
     window.location.reload(); // Recarga la página para volver al inicio
+  };
+
+  const handleDownloadResults = async () => {
+    if (resultadosDescargados) {
+      alert("Ya has descargado los resultados."); // Mensaje si ya se descargó
+      return;
+    }
+
+    try {
+      const response = await axios.get("http://localhost:5000/descargar-resultados", {
+        responseType: 'blob', // Importante para manejar archivos binarios
+      });
+
+      // Crear un enlace para descargar el archivo
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'resultados_certificados.xlsx'); // Nombre del archivo
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      // Marcar que los resultados han sido descargados
+      setResultadosDescargados(true);
+    } catch (error) {
+      console.error("Error al descargar el archivo:", error);
+      alert("Error al descargar el archivo.");
+    }
   };
 
   return (
     <div className="container">
       {mostrarSoloImagen ? (
-        // Muestra la imagen y el mensaje cuando la automatización se haya completado
         <div className="resultado">
           <img src="/Logo.png" alt="Logo Final" className="logo" />
           <p className="mensaje-final">
@@ -33,9 +61,8 @@ function App() {
             Descarga el reporte desde el ícono de abajo para consultar el estado de tus certificados en el proceso :).
           </p>
 
-          {/* Iconos de Excel y para regresar al inicio */}
           <div className="download-container">
-            <div className="icon-wrapper">
+            <div className="icon-wrapper" onClick={handleDownloadResults}>
               <FaFileExcel className="icon" title="Resultados de los Certificados" />
             </div>
             <div className="icon-wrapper" onClick={handleRegresar}>
@@ -44,7 +71,6 @@ function App() {
           </div>
         </div>
       ) : (
-        // Muestra la interfaz normal mientras se sube y ejecuta el proceso
         <>
           <img src="/Logo.png" alt="Logo" className="logo" />
           <DownloadTemplate />
