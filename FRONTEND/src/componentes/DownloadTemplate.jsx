@@ -1,4 +1,5 @@
 import React from "react";
+import { FaFileDownload, FaBook } from "react-icons/fa"; // Importamos los iconos
 import axios from "axios";
 
 const DownloadTemplate = () => {
@@ -10,9 +11,7 @@ const DownloadTemplate = () => {
             throw new Error("No se pudo descargar la plantilla");
         }
 
-        const { archivo_base64, nombre } = response.data; // Extraer el Base64 del JSON
-        
-        // Convertir Base64 a un Blob
+        const { archivo_base64, nombre } = response.data;
         const byteCharacters = atob(archivo_base64);
         const byteNumbers = new Uint8Array(byteCharacters.length)
             .map((_, i) => byteCharacters.charCodeAt(i));
@@ -20,7 +19,6 @@ const DownloadTemplate = () => {
             type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" 
         });
 
-        // Crear URL de descarga
         const url = URL.createObjectURL(blob);
         const a = document.createElement("a");
         a.href = url;
@@ -28,17 +26,22 @@ const DownloadTemplate = () => {
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
-        alert("Plantilla descargada correctamente!")
+        alert("Plantilla descargada correctamente!");
 
     } catch (error) {          
         console.error("Error al descargar la plantilla:", error);
     }
-};  
+  };  
 
   return (
-    <button onClick={handleDownload} className="download-button">
-      Descargar Plantilla
-    </button>
+    <div className="download-container">
+      <div className="icon-wrapper" onClick={handleDownload} title="Descargar Plantilla">
+        <FaFileDownload className="icon" />
+      </div>
+      <div className="icon-wrapper" title="Manual de Usuario">
+        <FaBook className="icon" />
+      </div>
+    </div>
   );
 };
 
