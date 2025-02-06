@@ -123,3 +123,47 @@ body {
 .icon {
   font-size: 24px;
 }
+
+.mensaje-final {
+  font-size: 16px;
+  font-weight: bold;
+  color: #155724;
+  text-align: center;
+  margin-top: 15px;
+  padding: 10px;
+  background-color: #d4edda;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos para los iconos de descarga y regreso */
+.icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #28a745, #218838);
+  color: white;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  margin: 10px;
+}
+
+.icon-wrapper:hover {
+  background: linear-gradient(135deg, #218838, #1e7e34);
+}
+
+.icon {
+  font-size: 24px;
+}
+
+/* Contenedor de iconos para descarga y regreso */
+.download-container {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 15px;
+}

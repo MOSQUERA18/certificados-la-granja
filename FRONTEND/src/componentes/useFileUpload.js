@@ -6,6 +6,7 @@ const useFileUpload = () => {
   const [mensaje, setMensaje] = useState("");
   const [progress, setProgress] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const [automatizacionCompleta, setAutomatizacionCompleta] = useState(false);
   const fileInputRef = useRef(null);
 
   const handleFileChange = (event) => {
@@ -65,6 +66,9 @@ const useFileUpload = () => {
       const autoResponse = await axios.post("http://localhost:5000/iniciar-automatizacion");
       setMensaje(autoResponse.data.mensaje || "Automatización completada.");
       alert("Automatización completada con éxito.");
+      
+      // Marcar que la automatización se ha completado
+      setAutomatizacionCompleta(true);
     } catch (error) {
       console.error("Error al subir archivo:", error);
       alert("Error al conectar con el servidor.");
@@ -75,7 +79,7 @@ const useFileUpload = () => {
     }
   };
 
-  return { fileInputRef, handleFileChange, handleUpload, progress, isLoading, mensaje };
+  return { fileInputRef, handleFileChange, handleUpload, progress, isLoading, mensaje, automatizacionCompleta };
 };
 
 export default useFileUpload;
