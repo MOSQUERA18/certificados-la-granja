@@ -7,6 +7,8 @@ import DownloadTemplate from "./componentes/DownloadTemplate";
 import { FaFileExcel, FaHome } from "react-icons/fa"; // Iconos de Excel y Home
 import axios from "axios"; // Asegúrate de importar axios
 
+const API_URL = import.meta.env.VITE_API_URL;  
+
 function App() {
   const { fileInputRef, handleFileChange, handleUpload, progress, isLoading, mensaje, automatizacionCompleta } =
     useFileUpload();
@@ -30,9 +32,7 @@ function App() {
     }
 
     try {
-      const response = await axios.get("http://localhost:5000/descargar-resultados", {
-        responseType: 'blob', // Importante para manejar archivos binarios
-      });
+      const response = await axios.get(`${API_URL}/descargar-resultados`, { responseType: 'blob' });
 
       // Crear un enlace para descargar el archivo
       const url = window.URL.createObjectURL(new Blob([response.data]));

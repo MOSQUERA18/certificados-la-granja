@@ -1,6 +1,8 @@
 import { useState, useRef } from "react";
 import axios from "axios";
 
+const API_URL = import.meta.env.VITE_API_URL;
+
 const useFileUpload = () => {
   const [file, setFile] = useState(null);
   const [mensaje, setMensaje] = useState("");
@@ -51,7 +53,7 @@ const useFileUpload = () => {
     formData.append("file", file);
 
     try {
-      const response = await axios.post("http://localhost:5000/subir-excel", formData, {
+      const response = await axios.post(`${API_URL}/subir-excel`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
         onUploadProgress: (progressEvent) => {
           const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
@@ -63,7 +65,7 @@ const useFileUpload = () => {
       alert("Archivo subido con éxito.");
       setProgress(0);
 
-      const autoResponse = await axios.post("http://localhost:5000/iniciar-automatizacion");
+      const autoResponse = await axios.post(`${API_URL}/iniciar-automatizacion`);
       setMensaje(autoResponse.data.mensaje || "Automatización completada.");
       alert("Automatización completada con éxito.");
       

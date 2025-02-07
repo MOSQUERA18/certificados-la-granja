@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { FaFileDownload, FaBook } from "react-icons/fa"; // Importamos los iconos
 import axios from "axios";
 
+const API_URL = import.meta.env.VITE_API_URL;  
+
 const DownloadTemplate = () => {
   const [templateDownloaded, setTemplateDownloaded] = useState(false); // Estado para controlar la descarga
 
@@ -12,7 +14,7 @@ const DownloadTemplate = () => {
     }
 
     try {
-      const response = await axios.get("http://localhost:5000/descargar-plantilla");
+      const response = await axios.get(`${API_URL}/descargar-plantilla`);
 
       if (response.status !== 200) {
         throw new Error("No se pudo descargar la plantilla");

@@ -1,4 +1,8 @@
 import { app, BrowserWindow } from 'electron';
+import dotenv from 'dotenv';
+
+// Cargar las variables de entorno
+dotenv.config();
 
 let mainWindow;
 
@@ -11,7 +15,9 @@ app.whenReady().then(() => {
         }
     });
 
-    mainWindow.loadURL('http://localhost:5173'); // Asegúrate de que este puerto es correcto
+    // Usar la URL desde el .env
+    const frontendURL = process.env.FRONTEND_URL
+    mainWindow.loadURL(frontendURL);
 });
 
 app.on('window-all-closed', () => {
