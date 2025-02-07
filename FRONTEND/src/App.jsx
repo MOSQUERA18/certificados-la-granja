@@ -11,10 +11,26 @@ import Swal from "sweetalert2"; // Importamos SweetAlert2
 const API_URL = import.meta.env.VITE_API_URL;  
 
 function App() {
-  const { fileInputRef, handleFileChange, handleUpload, progress, isLoading, mensaje, automatizacionCompleta } =
+  const { fileInputRef, handleFileChange, handleUpload, progress, isLoading, automatizacionCompleta } =
     useFileUpload();
   const [mostrarSoloImagen, setMostrarSoloImagen] = useState(false);
   const [resultadosDescargados, setResultadosDescargados] = useState(false);
+
+  useEffect(() => {
+    const handleBeforeUnload = (event) => {
+      event.preventDefault();
+      event.returnValue = "El proceso aún está en ejecución. ¿Estás seguro de que quieres salir?";
+    };
+  
+    if (isLoading) {
+      window.addEventListener("beforeunload", handleBeforeUnload);
+    }
+  
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [isLoading]);
+  
 
   useEffect(() => {
     if (automatizacionCompleta) {
@@ -100,7 +116,6 @@ function App() {
           </button>
           {progress > 0 && <ProgressBar progress={progress} />}
           {isLoading && <div className="spinner"></div>}
-          <p className="message">{mensaje}</p>
         </>
       )}
     </div>
