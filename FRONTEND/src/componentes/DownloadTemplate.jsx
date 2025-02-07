@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { FaFileDownload, FaBook } from "react-icons/fa"; // Importamos los iconos
 import axios from "axios";
+import Swal from "sweetalert2";
 
 const API_URL = import.meta.env.VITE_API_URL;  
 
@@ -9,7 +10,13 @@ const DownloadTemplate = () => {
 
   const handleDownload = async () => {
     if (templateDownloaded) {
-      alert("La plantilla ya ha sido descargada."); // Mensaje si ya se descargó
+      Swal.fire({
+        icon: "info",
+        title: "Plantilla ya descargada",
+        text: "Ya has descargado la plantilla anteriormente.",
+        confirmButtonColor: "#218838",
+        iconColor: "#218838"
+      });
       return;
     }
 
@@ -35,13 +42,28 @@ const DownloadTemplate = () => {
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
-      alert("Plantilla descargada correctamente!");
+
+      Swal.fire({
+        icon: "success",
+        title: "Descarga exitosa",
+        text: "La plantilla se ha descargado correctamente.",
+        confirmButtonColor: "#218838",
+        iconColor: "#28a745"
+      });
 
       // Marcar que la plantilla ha sido descargada
       setTemplateDownloaded(true);
 
     } catch (error) {          
       console.error("Error al descargar la plantilla:", error);
+
+      Swal.fire({
+        icon: "error",
+        title: "Error en la descarga",
+        text: "Hubo un problema al descargar la plantilla. Inténtalo nuevamente.",
+        confirmButtonColor: "#218838",
+        iconColor: "#dc3545"
+      });
     }
   };  
 

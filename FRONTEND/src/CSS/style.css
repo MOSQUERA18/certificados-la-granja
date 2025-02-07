@@ -30,19 +30,22 @@ body {
   padding: 12px 20px;
   border: none;
   border-radius: 6px;
-  font-size: 16px;
   cursor: pointer;
   transition: all 0.3s ease;
   width: 100%;
   margin: 10px 0;
+
+  font-family: 'Arial', sans-serif; /* Misma fuente */
+  font-weight: bold; /* Texto en negrita */
+  color: white; /* Color blanco */
+  text-align: center;
+  font-size: 18px; /* Ajusta el tamaño si es necesario */
 }
 
 .download-button:hover,
 .upload-button:hover {
   background: linear-gradient(135deg, #218838, #1e7e34);
 }
-
-
 
 .file-uploader {
   background-color: #e9ecef;
@@ -167,3 +170,17 @@ body {
   gap: 15px;
   margin-top: 15px;
 }
+
+.logo {
+  display: block; /* Evita comportamiento inline */
+  max-width: 100%; /* Se ajusta al ancho del contenedor */
+  width: 270px; /* Tamaño fijo inicial */
+  height: auto; /* Mantiene la proporción */
+  
+  margin: 0 auto; /* Centra horizontalmente */
+  position: relative; /* Asegura que los ajustes de posición se apliquen */
+  
+  transform: none; /* Elimina cualquier desplazamiento innecesario */
+  transition: transform 0.3s ease-in-out, width 0.3s ease-in-out; /* Suaviza cambios */
+}
+

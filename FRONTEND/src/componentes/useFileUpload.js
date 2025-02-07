@@ -1,5 +1,6 @@
-import { useState, useRef } from "react";
+import { useState, useRef } from "react"; 
 import axios from "axios";
+import Swal from "sweetalert2";
 
 const API_URL = import.meta.env.VITE_API_URL;
 
@@ -11,21 +12,32 @@ const useFileUpload = () => {
   const [automatizacionCompleta, setAutomatizacionCompleta] = useState(false);
   const fileInputRef = useRef(null);
 
+  const customSwal = (icon, title, text) => {
+    Swal.fire({
+      icon,
+      title,
+      text,
+      confirmButtonColor: "#218838",
+      confirmButtonText: "Aceptar",
+      iconColor: "#218838",
+    });
+  };
+
   const handleFileChange = (event) => {
     const selectedFile = event.target.files[0];
 
     if (!selectedFile) {
-      alert("No seleccionaste ningún archivo.");
+      customSwal("warning", "Archivo no seleccionado", "Por favor selecciona un archivo antes de continuar.");
       return;
     }
 
     const validExtensions = [
       "application/vnd.ms-excel",
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     ];
 
     if (!validExtensions.includes(selectedFile.type)) {
-      alert("Formato no válido. Selecciona un archivo Excel (.xls, .xlsx)");
+      customSwal("error", "Formato no válido", "Selecciona un archivo Excel (.xls, .xlsx)");
       if (fileInputRef.current) fileInputRef.current.value = "";
       setFile(null);
       return;
@@ -33,7 +45,7 @@ const useFileUpload = () => {
 
     const maxSize = 5 * 1024 * 1024;
     if (selectedFile.size > maxSize) {
-      alert("El archivo es demasiado grande. Máximo 5MB.");
+      customSwal("error", "Archivo demasiado grande", "El tamaño máximo permitido es de 5MB.");
       if (fileInputRef.current) fileInputRef.current.value = "";
       setFile(null);
       return;
@@ -44,7 +56,7 @@ const useFileUpload = () => {
 
   const handleUpload = async () => {
     if (!file) {
-      alert("Selecciona un archivo primero.");
+      customSwal("warning", "Ningún archivo seleccionado", "Selecciona un archivo primero.");
       return;
     }
 
@@ -56,24 +68,24 @@ const useFileUpload = () => {
       const response = await axios.post(`${API_URL}/subir-excel`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
         onUploadProgress: (progressEvent) => {
-          const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+          const percentCompleted = Math.round(
+            (progressEvent.loaded * 100) / progressEvent.total
+          );
           setProgress(percentCompleted);
-        }
+        },
       });
 
       setMensaje(response.data.mensaje || "Archivo subido correctamente.");
-      alert("Archivo subido con éxito.");
       setProgress(0);
 
       const autoResponse = await axios.post(`${API_URL}/iniciar-automatizacion`);
       setMensaje(autoResponse.data.mensaje || "Automatización completada.");
-      alert("Automatización completada con éxito.");
-      
-      // Marcar que la automatización se ha completado
+
+      customSwal("success", "Automatización Completada", "Se ha realizado la automatización con éxito.");
       setAutomatizacionCompleta(true);
     } catch (error) {
       console.error("Error al subir archivo:", error);
-      alert("Error al conectar con el servidor.");
+      customSwal("error", "Error de conexión", "No se pudo conectar con el servidor. Inténtalo nuevamente.");
       setMensaje("Error al conectar con el servidor.");
       setProgress(0);
     } finally {
@@ -81,7 +93,15 @@ const useFileUpload = () => {
     }
   };
 
-  return { fileInputRef, handleFileChange, handleUpload, progress, isLoading, mensaje, automatizacionCompleta };
+  return {
+    fileInputRef,
+    handleFileChange,
+    handleUpload,
+    progress,
+    isLoading,
+    mensaje,
+    automatizacionCompleta,
+  };
 };
 
 export default useFileUpload;
