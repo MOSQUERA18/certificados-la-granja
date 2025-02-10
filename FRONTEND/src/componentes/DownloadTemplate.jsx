@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { FaFileDownload, FaBook } from "react-icons/fa"; // Importamos los iconos
+import { FaFileDownload, FaBook } from "react-icons/fa";
 import axios from "axios";
 import Swal from "sweetalert2";
 
-const API_URL = import.meta.env.VITE_API_URL;  
+const API_URL = import.meta.env.VITE_API_URL;
 
 const DownloadTemplate = () => {
-  const [templateDownloaded, setTemplateDownloaded] = useState(false); // Estado para controlar la descarga
+  const [templateDownloaded, setTemplateDownloaded] = useState(false);
 
   const handleDownload = async () => {
     if (templateDownloaded) {
@@ -19,14 +19,16 @@ const DownloadTemplate = () => {
       });
       return;
     }
-  
+
+    setTemplateDownloaded(true); // Bloquear nuevas descargas inmediatamente
+
     try {
       const response = await axios.get(`${API_URL}/descargar-plantilla`);
-  
+
       if (response.status !== 200) {
         throw new Error("No se pudo descargar la plantilla");
       }
-  
+
       const { archivo_base64, nombre } = response.data;
       const byteCharacters = atob(archivo_base64);
       const byteNumbers = new Uint8Array(byteCharacters.length).map(
@@ -35,15 +37,17 @@ const DownloadTemplate = () => {
       const blob = new Blob([byteNumbers], {
         type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
       });
-  
+
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
       a.download = nombre;
       document.body.appendChild(a);
-  
-      // Detectar cuando la ventana recupera el foco después de la descarga
-      const handleFocus = () => {
+      a.click();
+      document.body.removeChild(a);
+
+      // Mostrar la alerta después de la descarga con un pequeño retardo
+      setTimeout(() => {
         Swal.fire({
           icon: "success",
           title: "Descarga exitosa",
@@ -51,22 +55,12 @@ const DownloadTemplate = () => {
           confirmButtonColor: "#218838",
           iconColor: "#28a745",
         });
-  
-        // Marcar que la plantilla ha sido descargada
-        setTemplateDownloaded(true);
-  
-        // Remover el listener después de mostrar la alerta
-        window.removeEventListener("focus", handleFocus);
-      };
-  
-      window.addEventListener("focus", handleFocus);
-      
-      a.click();
-      document.body.removeChild(a);
-  
+      }, 500);
+
     } catch (error) {
       console.error("Error al descargar la plantilla:", error);
-  
+      setTemplateDownloaded(false); // Permitir reintentar la descarga si falla
+
       Swal.fire({
         icon: "error",
         title: "Error en la descarga",
@@ -75,7 +69,7 @@ const DownloadTemplate = () => {
         iconColor: "#dc3545",
       });
     }
-  };  
+  };
 
   return (
     <div className="download-container">
