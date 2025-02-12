@@ -52,4 +52,12 @@
     border: 2px solid #dc3545;
     background-color: #f8d7da;
   }
+
+  .file-uploader p {
+    font-family: 'Arial', sans-serif; /* Ajusta según la fuente de la imagen */
+    font-weight: bold;
+    color: #034d19; /* Color similar al de la imagen */
+    text-align: center;
+  }
+  
   
