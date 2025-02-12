@@ -6,6 +6,11 @@ import os
 from leerEXCEL import leer_excel
 from navegacion import automatizar_navegacion
 from Plantilla import generar_plantilla
+from waitress import serve
+import logging
+
+logging.basicConfig(level=logging.DEBUG)
+
 
 # Agrega esta variable al inicio de tu archivo app.py
 archivo_generado = False
@@ -15,6 +20,10 @@ CORS(app)  # Habilitar CORS para permitir peticiones desde React
 
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)  # Crear carpeta si no existe
+
+@app.route('/')
+def home():
+    return jsonify({"mensaje": "Servidor Flask funcionando correctamente"}), 200
 
 @app.route('/subir-excel', methods=['POST'])
 def subir_excel():
@@ -65,4 +74,6 @@ def descargar_resultados():
     return send_file(archivo_resultados, as_attachment=True)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)  # Cambia el puerto a 5000 para evitar conflictos con React
+    logging.info("Servidor iniciado en http://127.0.0.1:5000")
+    serve(app, host="0.0.0.0", port=5000)
+
