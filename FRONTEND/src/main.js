@@ -1,7 +1,9 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, ipcMain } from 'electron';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import path from 'path';
+import fs from 'fs';
+import os from 'os';
 
 const __filename = fileURLToPath(import.meta.url);
 const _dirname = path.dirname(__filename);
@@ -10,25 +12,53 @@ const _dirname = path.dirname(__filename);
 dotenv.config();
 
 let mainWindow;
-console.log(_dirname)
+
 app.whenReady().then(() => {
     mainWindow = new BrowserWindow({
         width: 600,
         height: 550,
         webPreferences: {
-            nodeIntegration: true
+            nodeIntegration: true,
+            contextIsolation: false // Asegúrate de que esto esté configurado correctamente según tus necesidades de seguridad
         },
         icon: path.join(_dirname, '../public/Logo.ico') 
     });
 
-
-
     mainWindow.setMenuBarVisibility(false);
 
-
     // Usar la URL desde el .env
-    const frontendURL = process.env.FRONTEND_URL
+    const frontendURL = process.env.FRONTEND_URL;
     mainWindow.loadURL(frontendURL);
+
+    // Manejar la descarga de archivos
+    mainWindow.webContents.session.on('will-download', (event, item, webContents) => {
+        const downloadsPath = path.join(os.homedir(), 'Downloads'); // Ruta de la carpeta de Descargas
+        const filePath = path.join(downloadsPath, item.getFilename()); // Ruta completa del archivo
+
+        // Establecer la ruta de destino
+        item.setSavePath(filePath);
+
+        // Opcional: Puedes mostrar el progreso de la descarga
+        item.on('updated', (event, state) => {
+            if (state === 'interrupted') {
+                console.log('Descarga interrumpida');
+            } else if (state === 'progressing') {
+                if (item.isPaused()) {
+                    console.log('Descarga en pausa');
+                } else {
+                    console.log(`Descargando... ${item.getReceivedBytes()} bytes recibidos`);
+                }
+            }
+        });
+
+        item.once('done', (event, state) => {
+            if (state === 'completed') {
+                console.log('Descarga completada');
+            } else {
+                console.log(`Descarga fallida: ${state}`);
+            }
+        });
+    });
 });
 
 app.on('window-all-closed', () => {
