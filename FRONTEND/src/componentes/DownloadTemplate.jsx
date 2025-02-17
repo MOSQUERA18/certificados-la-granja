@@ -7,8 +7,9 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 const DownloadTemplate = () => {
   const [templateDownloaded, setTemplateDownloaded] = useState(false);
+  const [manualDownloaded, setManualDownloaded] = useState(false);
 
-  const handleDownload = async () => {
+  const handleDownloadTemplate = async () => {
     if (templateDownloaded) {
       Swal.fire({
         icon: "info",
@@ -20,7 +21,7 @@ const DownloadTemplate = () => {
       return;
     }
 
-    setTemplateDownloaded(true); // Bloquear nuevas descargas inmediatamente
+    setTemplateDownloaded(true);
 
     try {
       const response = await axios.get(`${API_URL}/descargar-plantilla`);
@@ -46,7 +47,6 @@ const DownloadTemplate = () => {
       a.click();
       document.body.removeChild(a);
 
-      // Mostrar la alerta después de la descarga con un pequeño retardo
       setTimeout(() => {
         Swal.fire({
           icon: "success",
@@ -56,10 +56,9 @@ const DownloadTemplate = () => {
           iconColor: "#28a745",
         });
       }, 500);
-
     } catch (error) {
       console.error("Error al descargar la plantilla:", error);
-      setTemplateDownloaded(false); // Permitir reintentar la descarga si falla
+      setTemplateDownloaded(false);
 
       Swal.fire({
         icon: "error",
@@ -71,12 +70,53 @@ const DownloadTemplate = () => {
     }
   };
 
+  const handleDownloadManual = () => {
+    if (manualDownloaded) {
+      Swal.fire({
+        icon: "info",
+        title: "Manual ya descargado",
+        text: "Ya has descargado el manual anteriormente.",
+        confirmButtonColor: "#218838",
+        iconColor: "#218838",
+      });
+      return;
+    }
+
+    setManualDownloaded(true);
+
+    const url = "./public/Manual de Usuario CertiGranja.pdf"; // Ruta relativa al PDF
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "Manual de Usuario CertiGranja.pdf";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+
+    setTimeout(() => {
+      Swal.fire({
+        icon: "success",
+        title: "Descarga exitosa",
+        text: "El manual de usuario se ha descargado correctamente.",
+        confirmButtonColor: "#218838",
+        iconColor: "#28a745",
+      });
+    }, 500);
+  };
+
   return (
     <div className="download-container">
-      <div className="icon-wrapper" onClick={handleDownload} title="Descargar Plantilla">
+      <div
+        className="icon-wrapper"
+        onClick={handleDownloadTemplate}
+        title="Descargar Plantilla"
+      >
         <FaFileDownload className="icon" />
       </div>
-      <div className="icon-wrapper" title="Manual de Usuario">
+      <div
+        className="icon-wrapper"
+        onClick={handleDownloadManual}
+        title="Manual de Usuario"
+      >
         <FaBook className="icon" />
       </div>
     </div>

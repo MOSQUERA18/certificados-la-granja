@@ -11,7 +11,6 @@ import logging
 
 logging.basicConfig(level=logging.DEBUG)
 
-
 # Agrega esta variable al inicio de tu archivo app.py
 archivo_generado = False
 
@@ -74,6 +73,6 @@ def descargar_resultados():
     return send_file(archivo_resultados, as_attachment=True)
 
 if __name__ == '__main__':
-    logging.info("Servidor iniciado en http://127.0.0.1:5000")
+    logging.info("Servidor iniciado en http://127.0.0.1:50400")
     serve(app, host="0.0.0.0", port=5000)
 
