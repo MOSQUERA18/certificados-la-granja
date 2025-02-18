@@ -2,14 +2,13 @@ import { app, BrowserWindow, ipcMain } from 'electron';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import path from 'path';
-import fs from 'fs';
 import os from 'os';
 
 const __filename = fileURLToPath(import.meta.url);
 const _dirname = path.dirname(__filename);
 
 // Cargar las variables de entorno
-dotenv.config();
+//dotenv.config();
 
 let mainWindow;
 
@@ -18,8 +17,8 @@ app.whenReady().then(() => {
         width: 600,
         height: 550,
         webPreferences: {
-            nodeIntegration: true,
-            contextIsolation: false // Asegúrate de que esto esté configurado correctamente según tus necesidades de seguridad
+            nodeIntegration: false,
+            contextIsolation: true // Asegúrate de que esto esté configurado correctamente según tus necesidades de seguridad
         },
         icon: path.join(_dirname, '../public/Logo.ico') 
     });
@@ -27,9 +26,12 @@ app.whenReady().then(() => {
     mainWindow.setMenuBarVisibility(false);
 
     // Usar la URL desde el .env
-    const frontendURL = process.env.FRONTEND_URL;
-    mainWindow.loadURL(frontendURL);
+    //const frontendURL = process.env.FRONTEND_URL;
+    //mainWindow.loadURL(frontendURL);
 
+    const indexPath = path.join(__dirname, '../build/index.html');
+    mainWindow.loadURL(`file://${indexPath}`);
+    
     // Manejar la descarga de archivos
     mainWindow.webContents.session.on('will-download', (event, item, webContents) => {
         const downloadsPath = path.join(os.homedir(), 'Downloads'); // Ruta de la carpeta de Descargas
