@@ -2,7 +2,7 @@ import { app, BrowserWindow, ipcMain } from 'electron';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
 import path from 'path';
-import os from 'os';
+import os from 'os';0
 
 const __filename = fileURLToPath(import.meta.url);
 const _dirname = path.dirname(__filename);
@@ -23,14 +23,11 @@ app.whenReady().then(() => {
         icon: path.join(_dirname, '../public/Logo.ico') 
     });
 
-    mainWindow.setMenuBarVisibility(false);
+    //mainWindow.setMenuBarVisibility(false);
 
-    // Usar la URL desde el .env
-    //const frontendURL = process.env.FRONTEND_URL;
-    //mainWindow.loadURL(frontendURL);
-
-    const indexPath = path.join(__dirname, '../build/index.html');
-    mainWindow.loadURL(`file://${indexPath}`);
+    const indexPath = path.join(_dirname, '../index.html');
+    console.log("indexPath: " + indexPath)
+    mainWindow.loadURL("http://localhost:5173/");
     
     // Manejar la descarga de archivos
     mainWindow.webContents.session.on('will-download', (event, item, webContents) => {
