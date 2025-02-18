@@ -64,7 +64,7 @@ async function createWindow() {
         mainWindow.setMenuBarVisibility(false);
 
         const startURL = process.env.NODE_ENV === 'development'
-            ? 'http://localhost:5173'  // Carga el frontend en desarrollo
+            ? 'http://Certi-Granja.local:5173'  // Carga el frontend en desarrollo
             : `file://${path.join(app.getAppPath(), 'dist', 'index.html')}`;  // Carga el frontend en producción
 
         console.log(`Cargando frontend desde: ${startURL}`);
@@ -110,5 +110,13 @@ app.on('window-all-closed', () => {
     if (backendProcess) {
         backendProcess.kill();  // Matar el proceso del backend al cerrar la aplicación
     }
-    if (process.platform !== 'darwin') app.quit();  // Cerrar la aplicación en plataformas que no sean macOS
+
+    // Cerrar el frontend (Vite)
+    exec('taskkill /F /IM node.exe /T', (error, stdout, stderr) => {
+        if (error) {
+            console.error(`Error al cerrar procesos: ${error.message}`);
+        }
+    });
+
+    app.quit();
 });
