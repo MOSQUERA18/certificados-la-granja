@@ -48,7 +48,7 @@ function startPythonBackend() {
 // Función para crear la ventana principal de la aplicación
 async function createWindow() {
     try {
-        await startPythonBackend();  // Espera que el backend se inicie correctamente
+        // await startPythonBackend();  // Espera que el backend se inicie correctamente
         console.log("✅ Backend iniciado correctamente");
 
         mainWindow = new BrowserWindow({
@@ -64,8 +64,8 @@ async function createWindow() {
         mainWindow.setMenuBarVisibility(false);
 
         const startURL = process.env.NODE_ENV === 'development'
-            ? 'http://Certi-Granja.local:5173'  // Carga el frontend en desarrollo
-            : `file://${path.join(app.getAppPath(), 'dist', 'index.html')}`;  // Carga el frontend en producción
+            ? 'http://localhost:5173/'  // Carga el frontend en desarrollo
+            : `http://localhost:5173/`;  // Carga el frontend en producción
 
         console.log(`Cargando frontend desde: ${startURL}`);
         mainWindow.loadURL(startURL);  // Carga el frontend en la ventana de Electron
