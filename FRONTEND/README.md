@@ -78,13 +78,5 @@ NPM START (LEVANTAR FRONTEND)
 
 #PASO 2
 INGRESA A LA CARPETA BACKEND Y EJECUTA 
+pip install -r requirements.txt
 PYTHON APP.PY
-
-
-para poner a correr todo sin inicializar app.py
-cd frontend 
-nmp i
-npm run dev
-
-
-

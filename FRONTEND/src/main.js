@@ -31,7 +31,7 @@ function startPythonBackend() {
             console.log(`Backend iniciado: ${stdout}`);
         });
 
-        backendProcess.stdout.on('data', (data) => {
+        backendimport.meta.stdout.on('data', (data) => {
             console.log(`Backend stdout: ${data}`);
             if (data.includes('Running on')) {  // Verifica que el backend esté corriendo
                 console.log("Backend ha arrancado correctamente.");
@@ -39,7 +39,7 @@ function startPythonBackend() {
             }
         });
 
-        backendProcess.stderr.on('data', (data) => {
+        backendimport.meta.stderr.on('data', (data) => {
             console.error(`Backend stderr: ${data}`);
         });
     });
@@ -48,7 +48,7 @@ function startPythonBackend() {
 // Función para crear la ventana principal de la aplicación
 async function createWindow() {
     try {
-        // await startPythonBackend();  // Espera que el backend se inicie correctamente
+        await startPythonBackend();  // Espera que el backend se inicie correctamente
         console.log("✅ Backend iniciado correctamente");
 
         mainWindow = new BrowserWindow({
@@ -63,7 +63,7 @@ async function createWindow() {
 
         mainWindow.setMenuBarVisibility(false);
 
-        const startURL = process.env.NODE_ENV === 'development'
+        const startURL = import.meta.env.NODE_ENV === 'development'
             ? 'http://localhost:5173/'  // Carga el frontend en desarrollo
             : `http://localhost:5173/`;  // Carga el frontend en producción
 
@@ -108,7 +108,7 @@ app.whenReady().then(createWindow);
 
 app.on('window-all-closed', () => {
     if (backendProcess) {
-        backendProcess.kill();  // Matar el proceso del backend al cerrar la aplicación
+        backendimport.meta.kill();  // Matar el proceso del backend al cerrar la aplicación
     }
 
     // Cerrar el frontend (Vite)

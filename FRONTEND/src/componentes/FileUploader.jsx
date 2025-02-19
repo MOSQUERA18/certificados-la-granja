@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { FaCloudUploadAlt, FaCheckCircle, FaExclamationTriangle } from "react-icons/fa";
 import * as XLSX from "xlsx"; // Importamos XLSX
 import "./FileUploader.css";
 
+// eslint-disable-next-line react/prop-types
 const FileUploader = ({ onFileChange, fileInputRef }) => {
   const [fileName, setFileName] = useState("");
   const [isUploaded, setIsUploaded] = useState(false);
@@ -68,6 +69,7 @@ const FileUploader = ({ onFileChange, fileInputRef }) => {
   return (
     <div
       className={`file-uploader ${isUploaded ? "uploaded" : ""}`}
+      // eslint-disable-next-line react/prop-types
       onClick={() => fileInputRef.current.click()}
     >
       {isUploaded ? (

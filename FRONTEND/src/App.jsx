@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import "./CSS/style.css";
 import FileUploader from "./componentes/FileUploader";
 import ProgressBar from "./componentes/ProgressBar";
@@ -8,7 +8,7 @@ import { FaFileExcel, FaHome } from "react-icons/fa"; // Iconos de Excel y Home
 import axios from "axios"; 
 import Swal from "sweetalert2"; // Importamos SweetAlert2
 
-const API_URL = import.meta.env.VITE_API_URL;  
+const VITE_API_URL = import.meta.env.VITE_API_URL;  
 
 function App() {
   const { fileInputRef, handleFileChange, handleUpload, progress, isLoading, automatizacionCompleta } =
@@ -55,7 +55,7 @@ function App() {
     }
 
     try {
-      const response = await axios.get(`${API_URL}/descargar-resultados`, { responseType: 'blob' });
+      const response = await axios.get(`${VITE_API_URL}/descargar-resultados`, { responseType: 'blob' });
 
       // Crear un enlace para descargar el archivo
       const url = window.URL.createObjectURL(new Blob([response.data]));
@@ -91,7 +91,7 @@ function App() {
     <div className="container">
       {mostrarSoloImagen ? (
         <div className="resultado">
-          <img src="/Logo.jpeg" alt="Logo Final" className="logo" />
+          <img src="/Logo.png" alt="Logo Final" className="logo" />
           <p className="mensaje-final">
             La generación de certificados ha finalizado.  
             Descarga el reporte desde el ícono de abajo para consultar el estado de tus certificados en el proceso :).
@@ -108,7 +108,7 @@ function App() {
         </div>
       ) : (
         <>
-          <img src="/Logo.jpeg" alt="Logo" className="logo" />
+          <img src="/Logo.png" alt="Logo" className="logo" />
           <DownloadTemplate />
           <FileUploader onFileChange={handleFileChange} fileInputRef={fileInputRef} />
           <button onClick={handleUpload} className="upload-button" disabled={isLoading}>
@@ -123,4 +123,3 @@ function App() {
 }
 
 export default App;
-
