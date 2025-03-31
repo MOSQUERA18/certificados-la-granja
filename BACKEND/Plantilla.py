@@ -3,7 +3,7 @@ from openpyxl import load_workbook
 
 def generar_plantilla():
     # Crear la plantilla
-    data = {'TIPO DE DOCUMENTO': [], 'NUMERO DE DOCUMENTO': [], 'NOMBRES Y APELLIDOS': [], 'DIA': [], 'MES': [], 'AÑO': []}
+    data = {'TIPO DE DOCUMENTO': [], 'NUMERO DE DOCUMENTO': [], 'NOMBRES Y APELLIDOS': [], 'DIA': [], 'MES': [], 'AÑO': [],'FICHA':'[]'}
     df = pd.DataFrame(data)
     
     # Guardar la plantilla en un archivo Excel
