@@ -73,12 +73,33 @@ const useFileUpload = () => {
         },
       });
 
-      // Iniciar automatización sin mostrar ventana final
+      // Iniciar automatización y esperar la respuesta
       await axios.post(`${API_URL}/iniciar-automatizacion`);
+
+      // Ocultar el progreso y el spinner antes de mostrar la alerta
+      setIsLoading(false);
+      setProgress(0);
+
+      // Mostrar alerta de finalización
+      await Swal.fire({
+        icon: "success",
+        title: "Proceso finalizado",
+        text: `El estado de los PDFs se encuentra en el archivo Excel dentro de la carpeta de descargas. Los PDFs se han generado correctamente.`,
+        confirmButtonColor: "#218838",
+        confirmButtonText: "Aceptar",
+        iconColor: "#28a745",
+      });
+
+      // Recargar la página después de un pequeño retraso
+      setTimeout(() => {
+        window.location.reload();
+      }, 100); // 100 ms de retraso
+
     } catch (error) {
       console.error("Error al subir archivo:", error);
       customSwal("error", "Error de conexión", "No se pudo conectar con el servidor. Inténtalo nuevamente.");
     } finally {
+      // Asegurarse de que el progreso y el estado de carga se restablezcan
       setProgress(0);
       setIsLoading(false);
     }

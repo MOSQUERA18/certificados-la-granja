@@ -93,7 +93,9 @@ function App() {
         <button onClick={handleUploadWithFolderCreation} className="upload-button" disabled={isLoading}>
           {isLoading ? "Cargando..." : "Cargar y Ejecutar"}
         </button>
-        {progress > 0 && <ProgressBar progress={progress} />}
+        {/* Mostrar ProgressBar solo si isLoading es true y progress es menor que 100 */}
+        {isLoading && progress < 100 && <ProgressBar progress={progress} />}
+        {/* Mostrar el spinner solo si isLoading es true */}
         {isLoading && <div className="spinner"></div>}
       </div>
     </div>
