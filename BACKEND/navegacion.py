@@ -14,9 +14,32 @@ import os
 import glob
 from leerEXCEL import leer_excel
 from generarResultados import generar_resultados
+import shutil
+import PyPDF2  # Asegúrate de importar PyPDF2 al inicio del archivo
 
 # Cargar las variables de entorno
 load_dotenv()
+
+def unir_pdfs(carpeta_destino):
+    # Obtener todos los archivos PDF en la carpeta de destino
+    pdf_files = glob.glob(os.path.join(carpeta_destino, "*.pdf"))
+    
+    # Crear un objeto PDF vacío para almacenar los archivos combinados
+    pdf_writer = PyPDF2.PdfWriter()
+
+    for pdf_file in pdf_files:
+        with open(pdf_file, "rb") as f:
+            pdf_reader = PyPDF2.PdfReader(f)
+            # Agregar cada página del PDF al objeto pdf_writer
+            for page in range(len(pdf_reader.pages)):
+                pdf_writer.add_page(pdf_reader.pages[page])
+
+    # Guardar el PDF combinado
+    output_pdf_path = os.path.join(carpeta_destino, "CERTIFICADOS_UNIDOS.pdf")
+    with open(output_pdf_path, "wb") as output_pdf:
+        pdf_writer.write(output_pdf)
+
+    print(f"Archivos PDF combinados en: {output_pdf_path}")
 
 def automatizar_navegacion(datos, carpeta_destino=None):
     driver = None
@@ -147,6 +170,11 @@ def automatizar_navegacion(datos, carpeta_destino=None):
 
                 if pdf_path:
                     print(f"Certificado generado correctamente para la fila {fila_actual + 1}.")
+                    # Mover el archivo PDF a la carpeta de destino
+                    if carpeta_destino:
+                        for file in pdf_path:
+                            shutil.move(file, carpeta_destino)
+                            print(f"Archivo PDF movido a: {carpeta_destino}")
                 else:
                     print(f"Certificado no encontrado para la fila {fila_actual + 1}.")
                     resultados.append({
@@ -173,6 +201,10 @@ def automatizar_navegacion(datos, carpeta_destino=None):
         nombre_archivo = os.getenv("OUTPUT_FILE", "resultados_certificados.xlsx")
         resultados_df = pd.DataFrame(resultados)
         generar_resultados(datos, resultados_df, nombre_archivo)
+
+        # Unir los PDFs en la carpeta de destino
+        if carpeta_destino:
+            unir_pdfs(carpeta_destino)
 
     return resultados  # <--- AGREGAR ESTA LÍNEA
 
