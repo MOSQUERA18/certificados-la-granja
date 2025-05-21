@@ -1,4 +1,4 @@
-import { useState, useRef } from "react"; 
+import { useState, useRef } from "react";
 import axios from "axios";
 import Swal from "sweetalert2";
 
@@ -6,10 +6,8 @@ const API_URL = import.meta.env.VITE_API_URL;
 
 const useFileUpload = () => {
   const [file, setFile] = useState(null);
-  const [mensaje, setMensaje] = useState("");
   const [progress, setProgress] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
-  const [automatizacionCompleta, setAutomatizacionCompleta] = useState(false);
   const fileInputRef = useRef(null);
 
   const customSwal = (icon, title, text) => {
@@ -65,7 +63,7 @@ const useFileUpload = () => {
     formData.append("file", file);
 
     try {
-      const response = await axios.post(`${API_URL}/subir-excel`, formData, {
+      await axios.post(`${API_URL}/subir-excel`, formData, {
         headers: { "Content-Type": "multipart/form-data" },
         onUploadProgress: (progressEvent) => {
           const percentCompleted = Math.round(
@@ -75,20 +73,13 @@ const useFileUpload = () => {
         },
       });
 
-      setMensaje(response.data.mensaje || "Archivo subido correctamente.");
-      setProgress(0);
-
-      const autoResponse = await axios.post(`${API_URL}/iniciar-automatizacion`);
-      setMensaje(autoResponse.data.mensaje || "Automatización completada.");
-
-      customSwal("success", "Automatización Completada", "Se ha realizado la automatización con éxito.");
-      setAutomatizacionCompleta(true);
+      // Iniciar automatización sin mostrar ventana final
+      await axios.post(`${API_URL}/iniciar-automatizacion`);
     } catch (error) {
       console.error("Error al subir archivo:", error);
       customSwal("error", "Error de conexión", "No se pudo conectar con el servidor. Inténtalo nuevamente.");
-      setMensaje("Error al conectar con el servidor.");
-      setProgress(0);
     } finally {
+      setProgress(0);
       setIsLoading(false);
     }
   };
@@ -99,8 +90,6 @@ const useFileUpload = () => {
     handleUpload,
     progress,
     isLoading,
-    mensaje,
-    automatizacionCompleta,
   };
 };
 

@@ -1,0 +1,44 @@
+.carpeta-creator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0.5rem;
+  max-width: 400px;
+  margin: auto;
+  margin-top: 1rem;
+}
+
+.input-carpeta {
+  width: 100%;
+  padding: 0.6rem;
+  border: 2px solid #28a745;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  background-color: #fff;
+  color: #034d19; /* Color del texto en todos los estados */
+  transition: border-color 0.3s;
+}
+
+/* Placeholder normal */
+.input-carpeta::placeholder {
+  font-weight: bold;
+  color: #034d19;
+}
+
+/* Texto y placeholder al hacer foco */
+.input-carpeta:focus {
+  border-color: #034d19;
+  outline: none;
+  color: #034d19 !important; /* Forzamos el color en foco */
+}
+
+.input-carpeta:focus::placeholder {
+  color: #2f9950 !important; /* Forzamos el color del placeholder también en foco */
+  text-shadow: 0.3px 0.3px 0.5px rgba(5, 58, 22, 0.02);
+}
+
+/* Ocultamos el botón */
+.crear-carpeta-button {
+  display: none;
+}

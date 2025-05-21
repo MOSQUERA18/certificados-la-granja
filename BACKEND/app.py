@@ -8,17 +8,40 @@ from navegacion import automatizar_navegacion
 from Plantilla import generar_plantilla
 from waitress import serve
 import logging
+from pathlib import Path
+from generarResultados import generar_resultados 
 
 logging.basicConfig(level=logging.DEBUG)
 
 # Agrega esta variable al inicio de tu archivo app.py
-archivo_generado = False
+ruta_carpeta_descargas = None
 
 app = Flask(__name__)
 CORS(app)  # Habilitar CORS para permitir peticiones desde React
 
 UPLOAD_FOLDER = "uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)  # Crear carpeta si no existe
+
+@app.route('/crear-carpeta-descargas', methods=['POST'])
+def crear_carpeta_en_descargas():
+    global ruta_carpeta_descargas  # usamos la variable global
+    try:
+        data = request.get_json()
+        nombre_carpeta = data.get('nombre')
+
+        if not nombre_carpeta:
+            return jsonify({"error": "No se proporcionó un nombre de carpeta"}), 400
+
+        carpeta_descargas = str(Path.home() / "Downloads")
+        ruta_carpeta = os.path.join(carpeta_descargas, nombre_carpeta)
+
+        os.makedirs(ruta_carpeta, exist_ok=True)
+        ruta_carpeta_descargas = ruta_carpeta  # Guardar la ruta
+
+        return jsonify({"mensaje": f"Carpeta creada en: {ruta_carpeta}"}), 200
+
+    except Exception as e:
+        return jsonify({"error": f"No se pudo crear la carpeta: {str(e)}"}), 500
 
 @app.route('/')
 def home():
@@ -37,6 +60,8 @@ def subir_excel():
 
 @app.route('/iniciar-automatizacion', methods=['POST'])
 def iniciar_automatizacion():
+    global ruta_carpeta_descargas
+
     filepath = os.path.join(UPLOAD_FOLDER, "archivo_subido.xlsx")
 
     if not os.path.exists(filepath):
@@ -45,9 +70,14 @@ def iniciar_automatizacion():
     datos = leer_excel(filepath)  
     if datos is None:
         return jsonify({"error": "No hay datos para procesar"}), 400
-    
-    automatizar_navegacion(datos)
-    return jsonify({"mensaje": "Automatización iniciada"}), 200
+
+    # Aquí deberías obtener el DataFrame de resultados
+    resultados = automatizar_navegacion(datos, carpeta_destino=ruta_carpeta_descargas)
+
+    # Y ahora llamas a la función pasando la ruta
+    generar_resultados(datos, resultados, nombre_archivo_salida="resultados_certificados.xlsx", carpeta_destino=ruta_carpeta_descargas)
+
+    return jsonify({"mensaje": "Automatización finalizada y resultados guardados"}), 200
 
 @app.route('/descargar-plantilla', methods=['GET'])
 def descargar_plantilla():
@@ -65,7 +95,11 @@ def descargar_plantilla():
 
 @app.route('/descargar-resultados', methods=['GET'])
 def descargar_resultados():
-    archivo_resultados = "resultados_certificados.xlsx"  # Asegúrate de que este archivo se genere correctamente
+    global ruta_carpeta_descargas
+    if not ruta_carpeta_descargas:
+        return jsonify({"error": "La carpeta de descarga no ha sido definida."}), 400
+
+    archivo_resultados = os.path.join(ruta_carpeta_descargas, "resultados_certificados.xlsx")
 
     if not os.path.exists(archivo_resultados):
         return jsonify({"error": "El archivo no está disponible."}), 404

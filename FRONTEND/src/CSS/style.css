@@ -173,8 +173,8 @@ body {
 
 .logo {
   display: block; /* Evita comportamiento inline */
-  max-width: 100%; /* Se ajusta al ancho del contenedor */
-  width: 270px; /* Tamaño fijo inicial */
+  max-width: 150%; /* Se ajusta al ancho del contenedor */
+  width: 300px; /* Tamaño fijo inicial */
   height: auto; /* Mantiene la proporción */
   
   margin: 0 auto; /* Centra horizontalmente */
@@ -182,5 +182,14 @@ body {
   
   transform: none; /* Elimina cualquier desplazamiento innecesario */
   transition: transform 0.3s ease-in-out, width 0.3s ease-in-out; /* Suaviza cambios */
+}
+
+.contenido > * {
+  margin-top: 7px; /* o cualquier valor que se vea bien */
+}
+
+/* Elimina margen superior del primer hijo para evitar espacio extra */
+.contenido > *:first-child {
+  margin-top: 0;
 }
 

@@ -18,7 +18,7 @@ from generarResultados import generar_resultados
 # Cargar las variables de entorno
 load_dotenv()
 
-def automatizar_navegacion(datos):
+def automatizar_navegacion(datos, carpeta_destino=None):
     driver = None
     resultados = []
 
@@ -173,6 +173,8 @@ def automatizar_navegacion(datos):
         nombre_archivo = os.getenv("OUTPUT_FILE", "resultados_certificados.xlsx")
         resultados_df = pd.DataFrame(resultados)
         generar_resultados(datos, resultados_df, nombre_archivo)
+
+    return resultados  # <--- AGREGAR ESTA LÍNEA
 
 if __name__ == "__main__":
     archivo_usuario = input("Ingrese el nombre del archivo Excel con los datos: ")
