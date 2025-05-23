@@ -28,7 +28,16 @@ def generar_resultados(datos, resultados_df, nombre_archivo_salida="resultados_c
 
     # Agregar columna de observaciones directamente al DataFrame completo
     print("Agregando columna de observaciones...")
-    datos["OBSERVACIONES"] = resultados_df["OBSERVACIONES"]  # Cambia 'resultados' por 'resultados_df'
+    # Asegurarse de que los resultados se asocien correctamente con las filas
+    if len(resultados_df) == len(datos):
+        datos["OBSERVACIONES"] = resultados_df["OBSERVACIONES"]
+        datos["STATUS"] = resultados_df["STATUS"]
+    else:
+        print(f"ADVERTENCIA: El número de resultados ({len(resultados_df)}) no coincide con el número de filas de datos ({len(datos)})")
+        # Asignar solo las observaciones disponibles
+        for i in range(min(len(resultados_df), len(datos))):
+            datos.loc[i, "OBSERVACIONES"] = resultados_df.iloc[i]["OBSERVACIONES"]
+            datos.loc[i, "STATUS"] = resultados_df.iloc[i]["STATUS"]
 
     # Guardar el archivo
     try:
@@ -50,17 +59,18 @@ def generar_resultados(datos, resultados_df, nombre_archivo_salida="resultados_c
         wb = load_workbook(ruta_archivo_salida)
         ws = wb.active
 
-        for idx, row in resultados_df.iterrows():  # Cambia 'resultados' por 'resultados_df'
+        # Aplicar colores basados en la columna STATUS del DataFrame datos
+        for idx, status in enumerate(datos["STATUS"] if "STATUS" in datos.columns else []):
             fill_color = None
 
-            if pd.isna(row.get("STATUS")) or pd.isna(row.get("OBSERVACIONES")):
+            if pd.isna(status):
                 continue
 
-            if row["STATUS"] == "EXITO":
+            if status == "EXITO":
                 fill_color = PatternFill(start_color="00FF00", end_color="00FF00", fill_type="solid")
-            elif row["STATUS"] == "NOVEDAD":
+            elif status == "NOVEDAD":
                 fill_color = PatternFill(start_color="FFFF00", end_color="FFFF00", fill_type="solid")
-            elif row["STATUS"] == "FALLIDO":
+            elif status == "FALLIDO":
                 fill_color = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
 
             if fill_color:

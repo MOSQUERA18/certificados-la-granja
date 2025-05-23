@@ -6,3 +6,4 @@ python-dotenv
 flask-cors
 reportlab
 waitress
+PyPDF2
