@@ -21,25 +21,38 @@ import PyPDF2  # Asegúrate de importar PyPDF2 al inicio del archivo
 load_dotenv()
 
 def unir_pdfs(carpeta_destino):
-    # Obtener todos los archivos PDF en la carpeta de destino
+    import re
+
     pdf_files = glob.glob(os.path.join(carpeta_destino, "*.pdf"))
-    
-    # Crear un objeto PDF vacío para almacenar los archivos combinados
     pdf_writer = PyPDF2.PdfWriter()
+    cedulas_agregadas = set()
 
     for pdf_file in pdf_files:
         with open(pdf_file, "rb") as f:
             pdf_reader = PyPDF2.PdfReader(f)
-            # Agregar cada página del PDF al objeto pdf_writer
-            for page in range(len(pdf_reader.pages)):
-                pdf_writer.add_page(pdf_reader.pages[page])
+            for page in pdf_reader.pages:
+                texto = page.extract_text()
 
-    # Guardar el PDF combinado
+                # Buscar la cédula en el texto usando regex
+                match = re.search(r"Cédula de Ciudadanía:\s+([\d\.]+)", texto)
+                if match:
+                    cedula = match.group(1).replace('.', '')
+
+                    # Solo añadir si no está repetida
+                    if cedula not in cedulas_agregadas:
+                        pdf_writer.add_page(page)
+                        cedulas_agregadas.add(cedula)
+                    else:
+                        print(f"Certificado duplicado omitido: {cedula}")
+                else:
+                    print("No se encontró la cédula en una página. Página agregada por precaución.")
+                    pdf_writer.add_page(page)
+
     output_pdf_path = os.path.join(carpeta_destino, "CERTIFICADOS_UNIDOS.pdf")
     with open(output_pdf_path, "wb") as output_pdf:
         pdf_writer.write(output_pdf)
 
-    print(f"Archivos PDF combinados en: {output_pdf_path}")
+    print(f"PDF generado sin duplicados: {output_pdf_path}")
 
 def automatizar_navegacion(datos, carpeta_destino=None):
     driver = None
@@ -178,7 +191,7 @@ def automatizar_navegacion(datos, carpeta_destino=None):
                 else:
                     print(f"Certificado no encontrado para la fila {fila_actual + 1}.")
                     resultados.append({
-                        "STATUS": "FALLIDO",
+                        "STATUS": "ERROR DE PAGINA",
                         "OBSERVACIONES": "Certificado no se generó por Error de la pagina"
                     })
 
@@ -206,7 +219,7 @@ def automatizar_navegacion(datos, carpeta_destino=None):
         if carpeta_destino:
             unir_pdfs(carpeta_destino)
 
-    return resultados  # <--- AGREGAR ESTA LÍNEA
+    return resultados  
 
 if __name__ == "__main__":
     archivo_usuario = input("Ingrese el nombre del archivo Excel con los datos: ")

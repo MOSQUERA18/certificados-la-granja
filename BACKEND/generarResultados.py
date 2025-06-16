@@ -72,6 +72,8 @@ def generar_resultados(datos, resultados_df, nombre_archivo_salida="resultados_c
                 fill_color = PatternFill(start_color="FFFF00", end_color="FFFF00", fill_type="solid")
             elif status == "FALLIDO":
                 fill_color = PatternFill(start_color="FF0000", end_color="FF0000", fill_type="solid")
+            elif status == "ERROR DE PAGINA":
+                fill_color = PatternFill(start_color="808080", end_color="808080", fill_type="solid")
 
             if fill_color:
                 excel_row = idx + 2  # Encabezado
