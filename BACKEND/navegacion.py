@@ -82,6 +82,11 @@ def automatizar_navegacion(datos, carpeta_destino=None):
                         EC.presence_of_element_located((By.XPATH, "//h3[text()='Al parecer se presentó algun problema!']"))
                     )
                     print(f"Se presentó un problema en la fila {fila_actual + 1}. Continuando con la siguiente fila...")
+                    # AGREGAR RESULTADO ANTES DE INCREMENTAR - ESTA ES LA CORRECCIÓN
+                    resultados.append({
+                        "STATUS": "ERROR DE PAGINA",
+                        "OBSERVACIONES": "Se presentó un problema en la página"
+                    })
                     fila_actual += 1
                     continue  # Saltar a la siguiente fila
                 except TimeoutException:
@@ -138,7 +143,7 @@ def automatizar_navegacion(datos, carpeta_destino=None):
                     if "CAPTCHA" in mensaje_error:
                         print(f"Error de CAPTCHA en la fila {fila_actual + 1}. Reintentando...")
                         # Aquí puedes implementar un contador de reintentos si lo deseas
-                        continue
+                        continue  # MANTENER TU LÓGICA ORIGINAL DE REINTENTO
 
                 except TimeoutException:
                     pass
@@ -190,10 +195,17 @@ def automatizar_navegacion(datos, carpeta_destino=None):
                             print(f"Archivo PDF movido a: {carpeta_destino}")
                 else:
                     print(f"Certificado no encontrado para la fila {fila_actual + 1}.")
-                    resultados.append({
-                        "STATUS": "ERROR DE PAGINA",
-                        "OBSERVACIONES": "Certificado no se generó por Error de la pagina"
-                    })
+                    # CORREGIR: Modificar el último resultado si ya existe, no agregar uno nuevo
+                    if resultados and len(resultados) > 0:
+                        resultados[-1] = {
+                            "STATUS": "ERROR DE PAGINA",
+                            "OBSERVACIONES": "Certificado no se generó por Error de la pagina"
+                        }
+                    else:
+                        resultados.append({
+                            "STATUS": "ERROR DE PAGINA",
+                            "OBSERVACIONES": "Certificado no se generó por Error de la pagina"
+                        })
 
                 fila_actual += 1
 
@@ -219,7 +231,7 @@ def automatizar_navegacion(datos, carpeta_destino=None):
         if carpeta_destino:
             unir_pdfs(carpeta_destino)
 
-    return resultados  
+    return resultados
 
 if __name__ == "__main__":
     archivo_usuario = input("Ingrese el nombre del archivo Excel con los datos: ")

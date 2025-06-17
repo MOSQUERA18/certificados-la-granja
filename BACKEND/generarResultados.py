@@ -37,7 +37,7 @@ def generar_resultados(datos, resultados_df, nombre_archivo_salida="resultados_c
         # Asignar solo las observaciones disponibles
         for i in range(min(len(resultados_df), len(datos))):
             datos.loc[i, "OBSERVACIONES"] = resultados_df.iloc[i]["OBSERVACIONES"]
-            datos.loc[i, "STATUS"] = resultados_df.iloc[i]["STATUS"]
+            #datos.loc[i, "STATUS"] = resultados_df.iloc[i]["STATUS"]
 
     # Guardar el archivo
     try:
