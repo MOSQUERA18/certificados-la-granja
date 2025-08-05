@@ -155,13 +155,14 @@ def automatizar_navegacion(datos, carpeta_destino=None):
                 # Verificar si hay una novedad
                 try:
                     novedad_element = WebDriverWait(driver, 1).until(
-                        EC.presence_of_element_located((By.ID, "ContentPlaceHolder1_Label12"))
+                        EC.presence_of_element_located((By.ID, "ContentPlaceHolder1_Label11"))
                     )
                     if novedad_element.is_displayed():
-                        print(f"Novedad detectada en la fila {fila_actual + 1}.")
+                        texto_novedad = novedad_element.text.strip()
+                        print(f"Novedad detectada en la fila {fila_actual + 1}: {texto_novedad}")
                         resultados.append({
                             "STATUS": "NOVEDAD",
-                            "OBSERVACIONES": "Esta persona tiene una novedad en su certificado"
+                            "OBSERVACIONES": f"NOVEDAD: {texto_novedad}"
                         })
                     else:
                         resultados.append({
